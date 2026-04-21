@@ -23,7 +23,7 @@
                     <option value="">— Choose a Tool —</option>
                     @foreach($tools as $tool)
                     <option value="{{ $tool->barcode }}" {{ old('barcode') == $tool->barcode ? 'selected' : '' }}>
-                        {{ $tool->name }} ({{ $tool->barcode }}) — Available: {{ $tool->available_quantity }}
+                        {{ $tool->name }} ({{ $tool->barcode }})
                     </option>
                     @endforeach
                 </select>

@@ -9,13 +9,13 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $maintenances = Maintenance::with('tool')->orderBy('created_at', 'desc')->get();
+        $maintenances = Maintenance::with('tool')->orderBy('created_at', 'desc')->paginate(10);
         return view('maintenance.index', compact('maintenances'));
     }
 
     public function create()
     {
-        $tools = \App\Models\Tool::where('available_quantity', '>', 0)->get();
+        $tools = \App\Models\Tool::where('status', 'Available')->get();
         return view('maintenance.create', compact('tools'));
     }
 
@@ -29,13 +29,13 @@ class MaintenanceController extends Controller
 
         $tool = \App\Models\Tool::where('barcode', $validated['barcode'])->first();
         
-        if ($tool->available_quantity <= 0) {
+        if ($tool->status !== 'Available') {
             return back()->withErrors(['barcode' => 'This tool is currently out of stock or already under maintenance.']);
         }
 
         Maintenance::create($validated);
         
-        $tool->decrement('available_quantity');
+        $tool->update(['status' => 'Maintenance']);
 
         return redirect()->route('maintenance.index')->with('success', 'Tool reported for maintenance.');
     }
@@ -62,7 +62,7 @@ class MaintenanceController extends Controller
         // Tool is released, increment quantity
         $tool = \App\Models\Tool::where('barcode', $maintenance->barcode)->first();
         if ($tool) {
-            $tool->increment('available_quantity');
+            $tool->update(['status' => 'Available']);
         }
 
         return redirect()->route('maintenance.index')->with('success', 'Maintenance completed and tool released.');
@@ -74,7 +74,7 @@ class MaintenanceController extends Controller
             // If deleted before release, restore the tool quantity
             $tool = \App\Models\Tool::where('barcode', $maintenance->barcode)->first();
             if ($tool) {
-                $tool->increment('available_quantity');
+                $tool->update(['status' => 'Available']);
             }
         }
         $maintenance->delete();

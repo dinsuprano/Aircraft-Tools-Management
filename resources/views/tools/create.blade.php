@@ -14,7 +14,7 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Barcode (Auto Generated)</label>
                 <input type="number" name="barcode" value="{{ old('barcode', $barcode) }}"
-                       class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 cursor-not-allowed" readonly>
+                       class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 ">
                 @error('barcode') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
@@ -43,8 +43,8 @@
                            class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantity</label>
-                    <input type="number" name="quantity" value="{{ old('quantity') }}" placeholder="0"
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantity to Add</label>
+                    <input type="number" name="quantity_to_add" value="{{ old('quantity_to_add', 1) }}" min="1" required
                            class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
                 </div>
             </div>

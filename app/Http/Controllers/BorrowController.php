@@ -9,13 +9,13 @@ class BorrowController extends Controller
 {
     public function index()
     {
-        $borrows = BorrowTool::with(['tool', 'employee'])->orderBy('created_at', 'desc')->get();
+        $borrows = BorrowTool::with(['tool', 'employee'])->orderBy('created_at', 'desc')->paginate(10);
         return view('borrows.index', compact('borrows'));
     }
 
     public function create()
     {
-        $tools = \App\Models\Tool::where('available_quantity', '>', 0)->get();
+        $tools = \App\Models\Tool::where('status', 'Available')->get();
         $employees = \App\Models\Employee::all();
         return view('borrows.create', compact('tools', 'employees'));
     }
@@ -33,13 +33,13 @@ class BorrowController extends Controller
 
         $tool = \App\Models\Tool::where('barcode', $validated['barcode'])->first();
         
-        if ($tool->available_quantity <= 0) {
+        if ($tool->status !== 'Available') {
             return back()->withErrors(['barcode' => 'This tool is currently out of stock or already checked out.']);
         }
 
         BorrowTool::create($validated);
         
-        $tool->decrement('available_quantity');
+        $tool->update(['status' => 'Checked Out']);
 
         return redirect()->route('borrows.index')->with('success', 'Tool checked out successfully.');
     }
@@ -67,7 +67,7 @@ class BorrowController extends Controller
         if ($validated['status'] == 'Returned') {
             $tool = \App\Models\Tool::where('barcode', $borrow->barcode)->first();
             if ($tool) {
-                $tool->increment('available_quantity');
+                $tool->update(['status' => 'Available']);
             }
         }
 
@@ -79,7 +79,7 @@ class BorrowController extends Controller
         if ($borrow->status != 'Returned') {
             $tool = \App\Models\Tool::where('barcode', $borrow->barcode)->first();
             if ($tool) {
-                $tool->increment('available_quantity');
+                $tool->update(['status' => 'Available']);
             }
         }
         $borrow->delete();

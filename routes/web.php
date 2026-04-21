@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Tools Management
+    Route::get('tools/{tool}/print', [ToolController::class, 'printBarcode'])->name('tools.print');
     Route::resource('tools', ToolController::class);
 
     // Employee Management

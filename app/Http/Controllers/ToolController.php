@@ -9,7 +9,7 @@ class ToolController extends Controller
 {
     public function index()
     {
-        $tools = Tool::all();
+        $tools = Tool::latest()->paginate(10);
         return view('tools.index', compact('tools'));
     }
 
@@ -28,15 +28,28 @@ class ToolController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'price' => 'nullable|numeric',
-            'quantity' => 'nullable|integer',
+            'quantity_to_add' => 'required|integer|min:1',
             'status' => 'nullable|string'
         ]);
 
-        $validated['available_quantity'] = $validated['quantity'] ?? 0;
+        $quantity = $validated['quantity_to_add'];
+        unset($validated['quantity_to_add']);
+        
+        $validated['status'] = $validated['status'] ?? 'Available';
 
-        Tool::create($validated);
+        for ($i = 0; $i < $quantity; $i++) {
+            // Generate a unique barcode for each subsequent item
+            if ($i > 0) {
+                $validated['barcode'] = mt_rand(100000, 999999) . mt_rand(1000000, 9999999);
+                // Ensure unique
+                while (Tool::where('barcode', $validated['barcode'])->exists()) {
+                    $validated['barcode'] = mt_rand(100000, 999999) . mt_rand(1000000, 9999999);
+                }
+            }
+            Tool::create($validated);
+        }
 
-        return redirect()->route('tools.index')->with('success', 'Tool created successfully.');
+        return redirect()->route('tools.index')->with('success', $quantity . ' Tool(s) created successfully.');
     }
 
     public function edit(Tool $tool)
@@ -51,7 +64,6 @@ class ToolController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'price' => 'nullable|numeric',
-            'quantity' => 'nullable|integer',
             'status' => 'nullable|string'
         ]);
 
@@ -64,5 +76,15 @@ class ToolController extends Controller
     {
         $tool->delete();
         return redirect()->route('tools.index')->with('success', 'Tool deleted successfully.');
+    }
+
+    public function printBarcode(Tool $tool)
+    {
+        $tool->increment('print_count');
+        
+        $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+        $barcodeSvg = $generator->getBarcode($tool->barcode, $generator::TYPE_CODE_128);
+
+        return view('tools.print', compact('tool', 'barcodeSvg'));
     }
 }
