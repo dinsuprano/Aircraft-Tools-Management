@@ -15,7 +15,9 @@ class ToolController extends Controller
 
     public function create()
     {
-        return view('tools.create');
+        // Generate a random 13-digit barcode (e.g., 8285337507167)
+        $barcode = mt_rand(100000, 999999) . mt_rand(1000000, 9999999);
+        return view('tools.create', compact('barcode'));
     }
 
     public function store(Request $request)

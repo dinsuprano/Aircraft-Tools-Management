@@ -1,58 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Aircraft Tools Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aircraft Tools Management is a comprehensive web application designed to streamline the management of aviation maintenance tools. Upgraded from a legacy PHP architecture to the modern **Laravel 11** framework, it provides robust features for inventory tracking, employee management, tool check-in/check-out logs, and maintenance reporting. 
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Dashboard:** At-a-glance metrics for tools, employees, and maintenance logs.
+- **Tool Inventory:** Complete CRUD (Create, Read, Update, Delete) management for aviation tools, including barcode tracking, quantity, and status monitoring.
+- **Employee Management:** Manage staff profiles, roles, and departmental assignments.
+- **Check In / Check Out:** Maintain an unalterable history of which employee borrowed which tool, ensuring strict accountability.
+- **Tools Maintenance:** Track tools that are damaged or under repair with detailed logs.
+- **Secure Authentication:** Powered by Laravel Breeze for secure login and profile management.
+- **Responsive UI:** Developed using Tailwind CSS and Alpine.js for a modern, responsive user experience.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation Setup
 
-## Learning Laravel
+Follow these steps to set up the project locally on your machine.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **PHP**: ^8.2
+- **Composer**: Dependency Manager for PHP
+- **Node.js & NPM**: For building frontend assets (Vite)
+- **MySQL/MariaDB**: Database server
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Step-by-Step Guide
 
-## Agentic Development
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd Aircraft-Tools-Management
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+2. **Install PHP Dependencies**
+   ```bash
+   composer install
+   ```
 
-```bash
-composer require laravel/boost --dev
+3. **Install Frontend Dependencies**
+   ```bash
+   npm install
+   npm run build
+   ```
 
-php artisan boost:install
-```
+4. **Environment Configuration**
+   Copy the example environment file and configure your local database credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   Open the `.env` file and update your database settings:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=tools_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+5. **Generate Application Key**
+   ```bash
+   php artisan key:generate
+   ```
 
-## Contributing
+6. **Run Migrations & Seed the Database**
+   This command creates the database tables and populates them with initial dummy data (including tools and admin user):
+   ```bash
+   php artisan migrate --seed
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+7. **Start the Development Server**
+   ```bash
+   php artisan serve
+   ```
+   The application will be available at `http://127.0.0.1:8000`.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Default Login Credentials
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
+If you seeded the database, you can log in using your pre-configured credentials.
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software.

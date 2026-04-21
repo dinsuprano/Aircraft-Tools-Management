@@ -1,79 +1,71 @@
-@extends('layouts.admin')
-
+@extends('layouts.app')
+@section('page-title', 'Add New Tool')
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col-sm-6">
-        <h1 class="m-0">Add New Tool</h1>
-        </div>
+<div class="p-6 max-w-3xl">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-white">Add New Tool</h1>
+        <p class="text-sm text-slate-500 mt-1">Enter the details for the new tool below</p>
     </div>
-    </div>
-</div>
 
-<div class="content">
-    <div class="container-fluid">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">Tool Information</h3>
+    <form action="{{ route('tools.store') }}" method="POST" class="space-y-5">
+        @csrf
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Barcode (Auto Generated)</label>
+                <input type="number" name="barcode" value="{{ old('barcode', $barcode) }}"
+                       class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 cursor-not-allowed" readonly>
+                @error('barcode') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
-            
-            <form action="{{ route('tools.store') }}" method="POST">
-                @csrf
-                <div class="card-body">
-                    <div class="form-group">
-                        <label for="barcode">Barcode</label>
-                        <input type="text" name="barcode" class="form-control" id="barcode" placeholder="Enter barcode" required value="{{ old('barcode') }}">
-                        @error('barcode') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="name">Tool Name</label>
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter tool name" required value="{{ old('name') }}">
-                        @error('name') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea name="description" class="form-control" id="description" rows="3">{{ old('description') }}</textarea>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="location">Location</label>
-                                <input type="text" name="location" class="form-control" id="location" value="{{ old('location') }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="price">Price ($)</label>
-                                <input type="number" step="0.01" name="price" class="form-control" id="price" value="{{ old('price') }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="quantity">Quantity</label>
-                                <input type="number" name="quantity" class="form-control" id="quantity" value="{{ old('quantity') }}">
-                            </div>
-                        </div>
-                    </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tool Name <span class="text-rose-400">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Torque Wrench"
+                       class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
+                @error('name') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
 
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select name="status" id="status" class="form-control">
-                            <option value="Available">Available</option>
-                            <option value="Maintenance">Maintenance</option>
-                        </select>
-                    </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Description</label>
+                <textarea name="description" rows="3" placeholder="Brief description of the tool..."
+                          class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors resize-none">{{ old('description') }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Location</label>
+                    <input type="text" name="location" value="{{ old('location') }}" placeholder="e.g. Hangar A"
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
                 </div>
-
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <a href="{{ route('tools.index') }}" class="btn btn-default float-right">Cancel</a>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Price ($)</label>
+                    <input type="number" step="0.01" name="price" value="{{ old('price') }}" placeholder="0.00"
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
                 </div>
-            </form>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantity</label>
+                    <input type="number" name="quantity" value="{{ old('quantity') }}" placeholder="0"
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Status</label>
+                <select name="status" class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors">
+                    <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                    <option value="Inactive" {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+            </div>
         </div>
-    </div>
+
+        <div class="flex items-center gap-3">
+            <button type="submit" class="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-sky-500/20">
+                Save Tool
+            </button>
+            <a href="{{ route('tools.index') }}" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors">
+                Cancel
+            </a>
+        </div>
+    </form>
 </div>
 @endsection

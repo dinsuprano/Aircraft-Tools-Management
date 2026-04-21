@@ -1,42 +1,27 @@
-<form method="post" action="{{ route('password.update') }}">
-    @csrf
-    @method('put')
-
-    <div class="form-group">
-        <label for="update_password_current_password">{{ __('Current Password') }}</label>
-        <input type="password" class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" id="update_password_current_password" name="current_password" autocomplete="current-password">
-        @error('current_password', 'updatePassword')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+<form method="post" action="{{ route('password.update') }}" class="space-y-4">
+    @csrf @method('put')
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Current Password</label>
+        <input type="password" name="current_password" autocomplete="current-password"
+               class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-colors">
+        @error('current_password', 'updatePassword') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
     </div>
-
-    <div class="form-group">
-        <label for="update_password_password">{{ __('New Password') }}</label>
-        <input type="password" class="form-control @error('password', 'updatePassword') is-invalid @enderror" id="update_password_password" name="password" autocomplete="new-password">
-        @error('password', 'updatePassword')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">New Password</label>
+        <input type="password" name="password" autocomplete="new-password"
+               class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-colors">
+        @error('password', 'updatePassword') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
     </div>
-
-    <div class="form-group">
-        <label for="update_password_password_confirmation">{{ __('Confirm Password') }}</label>
-        <input type="password" class="form-control @error('password_confirmation', 'updatePassword') is-invalid @enderror" id="update_password_password_confirmation" name="password_confirmation" autocomplete="new-password">
-        @error('password_confirmation', 'updatePassword')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Confirm New Password</label>
+        <input type="password" name="password_confirmation" autocomplete="new-password"
+               class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-colors">
+        @error('password_confirmation', 'updatePassword') <p class="text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
     </div>
-
-    <div class="form-group mb-0 mt-4">
-        <button type="submit" class="btn btn-warning">{{ __('Update Password') }}</button>
-
+    <div class="flex items-center gap-3 pt-2">
+        <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold rounded-xl transition-colors">Update Password</button>
         @if (session('status') === 'password-updated')
-            <span class="text-success ml-3 font-weight-bold"><i class="fas fa-check-circle"></i> {{ __('Password updated successfully.') }}</span>
+            <span class="text-emerald-400 text-sm flex items-center gap-1"><i class="fas fa-check-circle text-xs"></i> Updated!</span>
         @endif
     </div>
 </form>

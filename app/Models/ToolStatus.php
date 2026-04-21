@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ToolStatus extends Model
 {
-    //
+    protected $guarded = [];
 }

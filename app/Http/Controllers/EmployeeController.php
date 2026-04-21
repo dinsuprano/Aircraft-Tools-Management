@@ -15,31 +15,51 @@ class EmployeeController extends Controller
 
     public function create()
     {
-        // To be implemented
+        return view('employees.create');
     }
 
     public function store(Request $request)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees',
+            'department' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+        ]);
+
+        Employee::create($validated);
+
+        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
-    public function show(string $id)
+    public function show(Employee $employee)
     {
-        // To be implemented
+        return view('employees.show', compact('employee'));
     }
 
-    public function edit(string $id)
+    public function edit(Employee $employee)
     {
-        // To be implemented
+        return view('employees.edit', compact('employee'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, Employee $employee)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees,email,' . $employee->id,
+            'department' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+        ]);
+
+        $employee->update($validated);
+
+        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 
-    public function destroy(string $id)
+    public function destroy(Employee $employee)
     {
-        // To be implemented
+        $employee->delete();
+        
+        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
     }
 }

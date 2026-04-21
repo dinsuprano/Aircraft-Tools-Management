@@ -9,18 +9,35 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $maintenances = Maintenance::all();
+        $maintenances = Maintenance::with('tool')->orderBy('created_at', 'desc')->get();
         return view('maintenance.index', compact('maintenances'));
     }
 
     public function create()
     {
-        // To be implemented
+        $tools = \App\Models\Tool::where('available_quantity', '>', 0)->get();
+        return view('maintenance.create', compact('tools'));
     }
 
     public function store(Request $request)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'barcode' => 'required|exists:tools,barcode',
+            'problem' => 'required|string',
+            'date_report' => 'required|date'
+        ]);
+
+        $tool = \App\Models\Tool::where('barcode', $validated['barcode'])->first();
+        
+        if ($tool->available_quantity <= 0) {
+            return back()->withErrors(['barcode' => 'This tool is currently out of stock or already under maintenance.']);
+        }
+
+        Maintenance::create($validated);
+        
+        $tool->decrement('available_quantity');
+
+        return redirect()->route('maintenance.index')->with('success', 'Tool reported for maintenance.');
     }
 
     public function show(string $id)
@@ -28,18 +45,40 @@ class MaintenanceController extends Controller
         // To be implemented
     }
 
-    public function edit(string $id)
+    public function edit(Maintenance $maintenance)
     {
-        // To be implemented
+        return view('maintenance.edit', compact('maintenance'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, Maintenance $maintenance)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'solution' => 'required|string',
+            'date_released' => 'required|date'
+        ]);
+
+        $maintenance->update($validated);
+
+        // Tool is released, increment quantity
+        $tool = \App\Models\Tool::where('barcode', $maintenance->barcode)->first();
+        if ($tool) {
+            $tool->increment('available_quantity');
+        }
+
+        return redirect()->route('maintenance.index')->with('success', 'Maintenance completed and tool released.');
     }
 
-    public function destroy(string $id)
+    public function destroy(Maintenance $maintenance)
     {
-        // To be implemented
+        if (empty($maintenance->date_released)) {
+            // If deleted before release, restore the tool quantity
+            $tool = \App\Models\Tool::where('barcode', $maintenance->barcode)->first();
+            if ($tool) {
+                $tool->increment('available_quantity');
+            }
+        }
+        $maintenance->delete();
+
+        return redirect()->route('maintenance.index')->with('success', 'Maintenance log deleted successfully.');
     }
 }

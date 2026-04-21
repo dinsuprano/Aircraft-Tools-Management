@@ -1,48 +1,51 @@
-@extends('layouts.admin')
-
+@extends('layouts.app')
+@section('page-title', 'Profile Settings')
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col-sm-6">
-        <h1 class="m-0">Profile Information</h1>
+<div class="p-6 max-w-2xl space-y-6">
+
+    <div>
+        <h1 class="text-2xl font-bold text-white">Profile Settings</h1>
+        <p class="text-sm text-slate-500 mt-1">Manage your account information and security</p>
+    </div>
+
+    {{-- Profile Info --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800">
+            <h2 class="font-semibold text-slate-200 flex items-center gap-2">
+                <i class="fas fa-user text-sky-400 text-sm"></i>
+                Profile Information
+            </h2>
+        </div>
+        <div class="p-6">
+            @include('profile.partials.update-profile-information-form')
         </div>
     </div>
-    </div>
-</div>
 
-<div class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Update Profile</h3>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.update-profile-information-form')
-                    </div>
-                </div>
-
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h3 class="card-title">Update Password</h3>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.update-password-form')
-                    </div>
-                </div>
-
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Delete Account</h3>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.delete-user-form')
-                    </div>
-                </div>
-            </div>
+    {{-- Password --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800">
+            <h2 class="font-semibold text-slate-200 flex items-center gap-2">
+                <i class="fas fa-lock text-amber-400 text-sm"></i>
+                Update Password
+            </h2>
+        </div>
+        <div class="p-6">
+            @include('profile.partials.update-password-form')
         </div>
     </div>
+
+    {{-- Delete Account --}}
+    <div class="bg-slate-900 border border-rose-500/20 rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-rose-500/20">
+            <h2 class="font-semibold text-rose-400 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle text-sm"></i>
+                Danger Zone
+            </h2>
+        </div>
+        <div class="p-6">
+            @include('profile.partials.delete-user-form')
+        </div>
+    </div>
+
 </div>
 @endsection

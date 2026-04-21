@@ -9,18 +9,39 @@ class BorrowController extends Controller
 {
     public function index()
     {
-        $borrows = BorrowTool::all();
+        $borrows = BorrowTool::with(['tool', 'employee'])->orderBy('created_at', 'desc')->get();
         return view('borrows.index', compact('borrows'));
     }
 
     public function create()
     {
-        // To be implemented
+        $tools = \App\Models\Tool::where('available_quantity', '>', 0)->get();
+        $employees = \App\Models\Employee::all();
+        return view('borrows.create', compact('tools', 'employees'));
     }
 
     public function store(Request $request)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'barcode' => 'required|exists:tools,barcode',
+            'employee_id' => 'required|exists:employees,id',
+            'check_out_date' => 'required|date',
+            'status' => 'nullable|string'
+        ]);
+
+        $validated['status'] = $validated['status'] ?? 'Checked Out';
+
+        $tool = \App\Models\Tool::where('barcode', $validated['barcode'])->first();
+        
+        if ($tool->available_quantity <= 0) {
+            return back()->withErrors(['barcode' => 'This tool is currently out of stock or already checked out.']);
+        }
+
+        BorrowTool::create($validated);
+        
+        $tool->decrement('available_quantity');
+
+        return redirect()->route('borrows.index')->with('success', 'Tool checked out successfully.');
     }
 
     public function show(string $id)
@@ -28,18 +49,41 @@ class BorrowController extends Controller
         // To be implemented
     }
 
-    public function edit(string $id)
+    public function edit(BorrowTool $borrow)
     {
-        // To be implemented
+        return view('borrows.edit', compact('borrow'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, BorrowTool $borrow)
     {
-        // To be implemented
+        $validated = $request->validate([
+            'check_in_date' => 'nullable|date',
+            'actual_date_returned' => 'required|date',
+            'status' => 'required|string'
+        ]);
+
+        $borrow->update($validated);
+
+        if ($validated['status'] == 'Returned') {
+            $tool = \App\Models\Tool::where('barcode', $borrow->barcode)->first();
+            if ($tool) {
+                $tool->increment('available_quantity');
+            }
+        }
+
+        return redirect()->route('borrows.index')->with('success', 'Tool checked in successfully.');
     }
 
-    public function destroy(string $id)
+    public function destroy(BorrowTool $borrow)
     {
-        // To be implemented
+        if ($borrow->status != 'Returned') {
+            $tool = \App\Models\Tool::where('barcode', $borrow->barcode)->first();
+            if ($tool) {
+                $tool->increment('available_quantity');
+            }
+        }
+        $borrow->delete();
+
+        return redirect()->route('borrows.index')->with('success', 'Borrow log deleted successfully.');
     }
 }
