@@ -24,15 +24,15 @@
     </div>
     @endif
 
-    <div x-data="{ search: '' }" class="space-y-4">
+    <div class="space-y-4">
         {{-- Search Bar --}}
-        <div class="relative max-w-md">
+        <form action="{{ route('tools.index') }}" method="GET" class="relative max-w-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-slate-500"></i>
             </div>
-            <input type="text" x-model="search" placeholder="Search by name, barcode, location, or status..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, barcode, location, or status..."
                    class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors placeholder-slate-600">
-        </div>
+        </form>
 
         {{-- Table Card --}}
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
@@ -40,22 +40,17 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-slate-800 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            <th class="px-5 py-4 text-left">Barcode</th>
-                            <th class="px-5 py-4 text-left">Name</th>
-                            <th class="px-5 py-4 text-left">Location</th>
-                            <th class="px-5 py-4 text-left">Price</th>
-                            <th class="px-5 py-4 text-left">Status</th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="barcode" label="Barcode" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="name" label="Name" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="location" label="Location" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="price" label="Price" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="status" label="Status" /></th>
                             <th class="px-5 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800">
                         @forelse($tools as $tool)
-                        <tr class="hover:bg-slate-800/40 transition-colors"
-                            x-show="search === '' || 
-                                    '{{ strtolower($tool->name) }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($tool->barcode) }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($tool->location ?? '') }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($tool->status ?? 'Active') }}'.includes(search.toLowerCase())">
+                        <tr class="hover:bg-slate-800/40 transition-colors">
                             <td class="px-5 py-4 font-mono text-xs text-slate-400">{{ $tool->barcode }}</td>
                             <td class="px-5 py-4 font-medium text-slate-200">{{ $tool->name }}</td>
                             <td class="px-5 py-4 text-slate-400">{{ $tool->location ?? '—' }}</td>
@@ -63,7 +58,7 @@
                             <td class="px-5 py-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
                                     {{ $tool->status === 'Available' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' : 
-                                      ($tool->status === 'Checked Out' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : 
+                                      ($tool->status === 'Not Available' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : 
                                       ($tool->status === 'Maintenance' ? 'bg-rose-500/15 text-rose-400 border-rose-500/20' : 'bg-slate-800 text-slate-400 border-slate-700')) }} border">
                                     {{ $tool->status ?? 'Available' }}
                                 </span>

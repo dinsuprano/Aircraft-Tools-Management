@@ -7,9 +7,30 @@ use Illuminate\Http\Request;
 
 class ToolController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tools = Tool::latest()->paginate(10);
+        $query = Tool::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('barcode', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('sort') && in_array($request->sort, ['barcode', 'name', 'location', 'price', 'status'])) {
+            $direction = $request->direction === 'desc' ? 'desc' : 'asc';
+            $query->orderBy($request->sort, $direction);
+        } else {
+            $query->latest();
+        }
+
+        $tools = $query->paginate(10);
+        $tools->appends($request->all());
+
         return view('tools.index', compact('tools'));
     }
 

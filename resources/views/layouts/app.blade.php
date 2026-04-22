@@ -4,7 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Aircraft Tools Management') }}</title>
+    <title>{{ config('app.name', 'Aircraft Maintenance Tools Management') }}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -32,12 +36,12 @@
 
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-800">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-plane text-white text-sm"></i>
+            <div class="w-10 h-10 flex-shrink-0">
+                <img src="{{ asset('images/logo.png') }}" alt="ATMS Logo" class="w-full h-full object-contain rounded-xl shadow-lg">
             </div>
             <div class="min-w-0">
-                <p class="text-sm font-700 text-white truncate leading-tight">Aircraft Tools</p>
-                <p class="text-xs text-slate-500 truncate">Management System</p>
+                <p class="text-sm font-700 text-white truncate leading-tight">Aircraft Maintenance</p>
+                <p class="text-xs text-slate-500 truncate">Tools Management</p>
             </div>
         </div>
 
@@ -59,6 +63,15 @@
         <nav class="flex-1 px-4 py-3 space-y-1 overflow-y-auto">
 
             <p class="px-3 py-1 text-xs font-semibold text-slate-600 uppercase tracking-widest">Main Menu</p>
+
+            @if(Auth::check() && Auth::user()->role === 'Admin')
+            <a href="{{ route('admin.employee-admins.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
+                      {{ request()->routeIs('admin.employee-admins.*') ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' }}">
+                <i class="fas fa-shield-alt w-4 text-center"></i>
+                Admin Control Panel
+            </a>
+            @endif
 
             <a href="{{ route('dashboard') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150

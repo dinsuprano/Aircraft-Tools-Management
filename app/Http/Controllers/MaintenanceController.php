@@ -7,9 +7,32 @@ use Illuminate\Http\Request;
 
 class MaintenanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $maintenances = Maintenance::with('tool')->orderBy('created_at', 'desc')->paginate(10);
+        $query = Maintenance::with('tool');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('tool', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('barcode', 'like', "%{$search}%")
+                ->orWhere('problem', 'like', "%{$search}%")
+                ->orWhere('solution', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('sort') && in_array($request->sort, ['barcode', 'problem', 'date_report', 'date_released'])) {
+            $direction = $request->direction === 'desc' ? 'desc' : 'asc';
+            $query->orderBy($request->sort, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $maintenances = $query->paginate(10);
+        $maintenances->appends($request->all());
+
         return view('maintenance.index', compact('maintenances'));
     }
 

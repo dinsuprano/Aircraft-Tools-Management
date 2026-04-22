@@ -22,15 +22,15 @@
     </div>
     @endif
 
-    <div x-data="{ search: '' }" class="space-y-4">
+    <div class="space-y-4">
         {{-- Search Bar --}}
-        <div class="relative max-w-md">
+        <form action="{{ route('maintenance.index') }}" method="GET" class="relative max-w-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-slate-500"></i>
             </div>
-            <input type="text" x-model="search" placeholder="Search by tool, barcode, problem, or status..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by tool, barcode, problem, or status..."
                    class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors placeholder-slate-600">
-        </div>
+        </form>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
@@ -38,22 +38,17 @@
                     <thead>
                         <tr class="border-b border-slate-800 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             <th class="px-5 py-4 text-left">Tool</th>
-                            <th class="px-5 py-4 text-left">Barcode</th>
-                            <th class="px-5 py-4 text-left">Problem</th>
-                            <th class="px-5 py-4 text-left">Reported</th>
-                            <th class="px-5 py-4 text-left">Released</th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="barcode" label="Barcode" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="problem" label="Problem" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="date_report" label="Reported" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="date_released" label="Released" /></th>
                             <th class="px-5 py-4 text-center">Status</th>
                             <th class="px-5 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800">
                         @forelse($maintenances as $maintenance)
-                        <tr class="hover:bg-slate-800/40 transition-colors"
-                            x-show="search === '' || 
-                                    '{{ strtolower($maintenance->tool->name ?? '') }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($maintenance->barcode) }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($maintenance->problem) }}'.includes(search.toLowerCase()) || 
-                                    ('{{ $maintenance->date_released ? 'released' : 'under repair' }}').includes(search.toLowerCase())">
+                        <tr class="hover:bg-slate-800/40 transition-colors">
                             <td class="px-5 py-4 font-medium text-slate-200">{{ $maintenance->tool->name ?? '—' }}</td>
                             <td class="px-5 py-4 font-mono text-xs text-slate-400">{{ $maintenance->barcode }}</td>
                             <td class="px-5 py-4 text-slate-400">{{ \Illuminate\Support\Str::limit($maintenance->problem, 55) }}</td>

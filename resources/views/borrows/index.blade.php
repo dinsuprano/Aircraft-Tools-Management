@@ -22,15 +22,15 @@
     </div>
     @endif
 
-    <div x-data="{ search: '' }" class="space-y-4">
+    <div class="space-y-4">
         {{-- Search Bar --}}
-        <div class="relative max-w-md">
+        <form action="{{ route('borrows.index') }}" method="GET" class="relative max-w-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-slate-500"></i>
             </div>
-            <input type="text" x-model="search" placeholder="Search by employee, tool, or barcode..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by employee, tool, or barcode..."
                    class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-colors placeholder-slate-600">
-        </div>
+        </form>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
@@ -39,20 +39,16 @@
                         <tr class="border-b border-slate-800 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             <th class="px-5 py-4 text-left">Employee</th>
                             <th class="px-5 py-4 text-left">Tool</th>
-                            <th class="px-5 py-4 text-left">Barcode</th>
-                            <th class="px-5 py-4 text-left">Checked Out</th>
-                            <th class="px-5 py-4 text-left">Returned</th>
-                            <th class="px-5 py-4 text-center">Status</th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="barcode" label="Barcode" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="check_out_date" label="Date Checked Out" /></th>
+                            <th class="px-5 py-4 text-left"><x-sortable-link column="actual_date_returned" label="Date Returned" /></th>
+                            <th class="px-5 py-4 text-center"><x-sortable-link column="status" label="Status" /></th>
                             <th class="px-5 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800">
                         @forelse($borrows as $borrow)
-                        <tr class="hover:bg-slate-800/40 transition-colors"
-                            x-show="search === '' || 
-                                    '{{ strtolower($borrow->employee->name ?? '') }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($borrow->tool->name ?? '') }}'.includes(search.toLowerCase()) || 
-                                    '{{ strtolower($borrow->barcode) }}'.includes(search.toLowerCase())">
+                        <tr class="hover:bg-slate-800/40 transition-colors">
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">

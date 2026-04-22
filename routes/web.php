@@ -29,6 +29,13 @@ Route::middleware('auth')->group(function () {
 
     // Check In / Check Out
     Route::resource('borrows', \App\Http\Controllers\BorrowController::class);
+
+    // Admin Only Control Panel
+    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('employee-admins', [\App\Http\Controllers\Admin\EmployeeAdminController::class, 'index'])->name('employee-admins.index');
+        Route::patch('employee-admins/{user}/toggle', [\App\Http\Controllers\Admin\EmployeeAdminController::class, 'toggleApproval'])->name('employee-admins.toggle');
+        Route::delete('employee-admins/{user}', [\App\Http\Controllers\Admin\EmployeeAdminController::class, 'destroy'])->name('employee-admins.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

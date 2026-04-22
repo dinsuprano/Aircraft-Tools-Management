@@ -7,9 +7,33 @@ use Illuminate\Http\Request;
 
 class BorrowController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $borrows = BorrowTool::with(['tool', 'employee'])->orderBy('created_at', 'desc')->paginate(10);
+        $query = BorrowTool::with(['tool', 'employee']);
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('employee', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('tool', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('barcode', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('sort') && in_array($request->sort, ['barcode', 'check_out_date', 'actual_date_returned', 'status'])) {
+            $direction = $request->direction === 'desc' ? 'desc' : 'asc';
+            $query->orderBy($request->sort, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $borrows = $query->paginate(10);
+        $borrows->appends($request->all());
+
         return view('borrows.index', compact('borrows'));
     }
 
@@ -39,7 +63,7 @@ class BorrowController extends Controller
 
         BorrowTool::create($validated);
         
-        $tool->update(['status' => 'Checked Out']);
+        $tool->update(['status' => 'Not Available']);
 
         return redirect()->route('borrows.index')->with('success', 'Tool checked out successfully.');
     }
